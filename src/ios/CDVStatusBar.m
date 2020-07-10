@@ -150,7 +150,7 @@ static const void *kStatusBarStyle = &kStatusBarStyle;
     } else {
         self.webView.scrollView.scrollsToTop = NO;
     }
- 
+
     // blank scroll view to intercept status bar taps
     UIScrollView *fakeScrollView = [[UIScrollView alloc] initWithFrame:UIScreen.mainScreen.bounds];
     fakeScrollView.delegate = self;
@@ -438,6 +438,11 @@ static const void *kStatusBarStyle = &kStatusBarStyle;
 {
     BOOL isIOS11 = (IsAtLeastiOSVersion(@"11.0"));
 
+    CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
+    CGFloat height = statusBarFrame.size.height;
+
+    if (height == 0) return;
+
     CGRect bounds = [self.viewController.view.window bounds];
     if (CGRectEqualToRect(bounds, CGRectZero)) {
         bounds = [[UIScreen mainScreen] bounds];
@@ -445,11 +450,7 @@ static const void *kStatusBarStyle = &kStatusBarStyle;
 
     self.viewController.view.frame = bounds;
 
-    self.webView.frame = bounds;
-
-    CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
-    CGRect frame = self.webView.frame;
-    CGFloat height = statusBarFrame.size.height;
+    CGRect frame = bounds;
 
     if (!self.statusBarOverlaysWebView) {
         frame.origin.y = height;
@@ -471,7 +472,7 @@ static const void *kStatusBarStyle = &kStatusBarStyle;
     }
     frame.size.height -= frame.origin.y;
     self.webView.frame = frame;
-    
+
 }
 
 - (void) dealloc
